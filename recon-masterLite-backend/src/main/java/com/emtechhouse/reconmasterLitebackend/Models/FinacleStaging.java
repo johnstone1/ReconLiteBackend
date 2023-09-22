@@ -32,5 +32,4 @@ public class FinacleStaging {
     private Date valueDate;
     private String TransactionRemarks;
 
-
 }
