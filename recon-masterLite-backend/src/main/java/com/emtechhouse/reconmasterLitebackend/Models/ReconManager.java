@@ -1,4 +1,5 @@
 package com.emtechhouse.reconmasterLitebackend.Models;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
@@ -21,6 +22,7 @@ public class ReconManager {
    private LocalDateTime transactionDate;
    private BigDecimal amount;
    private  BigDecimal debit;
+   @Column(length = 15)
    private int phoneNumber;
    private String transactionId;
    private String transactionDescription;
@@ -32,6 +34,6 @@ public class ReconManager {
    private BigDecimal runningBalance;
    private Date valueDate;
    private String TransactionRemarks;
-   
+
 
 }
