@@ -1,21 +1,18 @@
 package com.emtechhouse.reconmasterLitebackend.Services;
 
 import com.emtechhouse.reconmasterLitebackend.DTO.EntityResponse;
-import com.emtechhouse.reconmasterLitebackend.Models.FinacleStaging;
-import com.emtechhouse.reconmasterLitebackend.Models.ThirdPartyStaging;
-import com.emtechhouse.reconmasterLitebackend.Repositories.FinacleStagingRepository;
-import com.emtechhouse.reconmasterLitebackend.Repositories.ThirdPartyStagingRepository;
+
+import com.emtechhouse.reconmasterLitebackend.UtilsAndConstants.FileTypes;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.List;
-import java.util.Map;
+
 
 @Slf4j
 @Service
@@ -24,36 +21,67 @@ import java.util.Map;
 public class FileHandler {
 
     private final FileReader fileReader;
-    private final FinacleStagingRepository finacleStagingRepository;
-    private final ThirdPartyStagingRepository thirdPartyStagingRepository;
 
 
+    public EntityResponse<?> fileTypeHandler(List<MultipartFile> files) throws IOException {
+        EntityResponse<?> response = new EntityResponse<>();
 
-//     reconcile excel and finacle
-public void reconHandler(Path ExcPath, Path FinPath) {
-    try {
-        File ExcFile = new File(ExcPath.toString());
-        File FinFile = new File(FinPath.toString());
+        for (MultipartFile file : files) {
+            // Get the file name and determine its type based on the extension
+            String fileName = file.getOriginalFilename();
+            FileTypes fileType = getFileType(fileName);
 
-        if (ExcFile.exists() && FinFile.exists()) {
-            Map<String, ThirdPartyStaging> excDataMap = this.fileReader.readPaissaData(ExcPath.toString());
-            Map<String, FinacleStaging> FinDataMap = this.fileReader.readFinFile(FinPath.toString());
-
-            log.info("Starting reconciliation process...");
-
-
-
-            // Save the updated data
-//            finacleStagingRepository.saveAll(excDataMap);
-//            thirdPartyStagingRepository.saveAll(FinDataMap.values());
-
-            log.info("Reconciliation process completed.");
-        } else {
-            log.error("Files do not exist: ExcFile={} FinFile={}", ExcFile.exists(), FinFile.exists());
+            if (fileType == FileTypes.EXCEL) {
+                // Process Excel file
+                log.info("Reading Excel file...");
+            } else if (fileType == FileTypes.TEXT) {
+                // Process Text file
+                log.info("Reading Text file...");
+            } else if (fileType == FileTypes.XML){
+                log.info("Reading Xml file...");
+            } else if (fileType == FileTypes.PDF){
+                log.info("Reading PDF file...");
+            } else {
+                // Handle other file types or report an error for each file
+                response.setMessage("Unsupported file type: " + fileName);
+                response.setStatusCode(HttpStatus.BAD_REQUEST.value());
+                return response;
+            }
         }
-    } catch (Exception e) {
-        log.error("An error occurred during reconciliation: {}", e.getMessage(), e);
+
+        // If processing is successful for all files, set response data and status
+        response.setMessage("All files processed successfully.");
+        response.setStatusCode(HttpStatus.OK.value());
+        return response;
+    }
+
+
+    private FileTypes getFileType(String fileName) {
+        String fileExtension = getFileExtension(fileName.toLowerCase());
+
+        switch (fileExtension) {
+            case "xlsx":
+            case "xls":
+                return FileTypes.EXCEL;
+            case "txt":
+                return FileTypes.TEXT;
+            case "csv":
+                return FileTypes.CSV;
+            case "xml":
+                return FileTypes.XML;
+            case "pdf":
+                return FileTypes.PDF;
+            default:
+                return FileTypes.Other;
+        }
+    }
+
+    private String getFileExtension(String fileName) {
+        int lastDotIndex = fileName.lastIndexOf(".");
+        if (lastDotIndex != -1) {
+            return fileName.substring(lastDotIndex + 1);
+        }
+        return "";
     }
 }
 
-}

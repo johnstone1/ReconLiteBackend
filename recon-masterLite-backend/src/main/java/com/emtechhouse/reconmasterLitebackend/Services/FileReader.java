@@ -37,6 +37,8 @@ public class FileReader {
                 continue;
             }
 
+            log.info("");
+
             // Check if cells at index 0, 1, and 2 are empty
             Cell cell0 = curRow.getCell(0);
             Cell cell1 = curRow.getCell(1);
