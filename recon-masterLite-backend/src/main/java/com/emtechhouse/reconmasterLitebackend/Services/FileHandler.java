@@ -6,13 +6,14 @@ import com.emtechhouse.reconmasterLitebackend.UtilsAndConstants.FileTypes;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -21,8 +22,6 @@ import java.util.List;
 public class FileHandler {
 
     private final FileReader fileReader;
-
-
     public EntityResponse<?> fileTypeHandler(List<MultipartFile> files) throws IOException {
         EntityResponse<?> response = new EntityResponse<>();
 
@@ -34,6 +33,19 @@ public class FileHandler {
             if (fileType == FileTypes.EXCEL) {
                 // Process Excel file
                 log.info("Reading Excel file...");
+
+                try {
+                    EntityResponse entityResponse =new EntityResponse();
+                    boolean success = Boolean.parseBoolean(FileReader.extractDataToJson(file));
+                    if (success) {
+                        entityResponse.setMessage(HttpStatus.CREATED.getReasonPhrase());
+                        log.info("updated successfully...");
+                    } else {
+                        log.warn("internal server error...");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();log.warn("internal server error...");
+                }
             } else if (fileType == FileTypes.TEXT) {
                 // Process Text file
                 log.info("Reading Text file...");
