@@ -1,35 +1,32 @@
-package com.emtechhouse.reconmasterLitebackend.Models;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.Date;
-
-@Entity
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
-public class FinacleStaging {
-    @Id
-    private String rrn;
-    private String secRef;
-    private String transParticular;
-    private LocalDateTime transactionDate;
-    private BigDecimal amount;
-    private  BigDecimal debit;
-    private int phoneNumber;
-    private String transactionId;
-    private String transactionDescription;
-    private String exceptionReason;
-    private String currencyCode;
-    private String status;
-    private String accountNumber;
-    private  String forAcid;
-    private BigDecimal runningBalance;
-    private Date valueDate;
-    private String TransactionRemarks;
-
-}
+//package com.emtechhouse.reconmasterLitebackend.Models;
+//import com.fasterxml.jackson.annotation.JsonIgnore;
+//import jakarta.persistence.*;
+//import lombok.AllArgsConstructor;
+//import lombok.Data;
+//import lombok.NoArgsConstructor;
+//import lombok.ToString;
+//
+//@Entity
+//@AllArgsConstructor
+//@NoArgsConstructor
+//@Data
+//public class FinacleStaging {
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.AUTO)
+//    private Long id;
+//    private String columnName;
+//    private String startIndex;
+//    private String endIndex;
+//    private String columnTypeIdentifier; // finacle or third party
+//    private int priority;
+//    private boolean isDelimited = false;
+//    private String delimiter;
+//    private int delimiterPosition;
+//
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "jsonData1_id",referencedColumnName = "id")
+//    @JsonIgnore
+//    @ToString.Exclude
+//    private PriorityTable priorityTable;
+//
+//}
