@@ -26,7 +26,8 @@ public class ConfigurationTable {
     private String dateFormat;
     private String fileName;
     private String fullFileName;
-    private String runningNumber;
+    private long runningNumberStartIndex;
+    private long runningNumberEndIndex;
     private String fileExtension;
     private String rowSeparator;
     private String delimiter;

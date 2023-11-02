@@ -25,8 +25,7 @@ public class Columns {
     private String delimiter;
     private int delimiterPosition;
     @ManyToOne(fetch = FetchType.LAZY)
-
-    @JoinColumn(name = "priorityTable_id",referencedColumnName = "id")
+    @JoinColumn(name = "priorityTable_id", referencedColumnName = "id")
     @JsonIgnore
     @ToString.Exclude
     private PriorityTable priorityTable;

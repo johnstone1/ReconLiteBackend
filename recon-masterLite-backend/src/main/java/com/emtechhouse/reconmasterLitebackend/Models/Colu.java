@@ -15,8 +15,12 @@ public class Colu {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String columnName;
+    private String columnDataType;
     private String columnPosition;
-    private String fileTypeIdentifier;
+   // private String fileTypeIdentifier;
+    private String dateFormat;
+    private boolean hasAllowance;
+    private String allowanceAmount;
     private String columnTypeIdentifier;//variable type
     private int priority;
     private boolean isDelimited=false;

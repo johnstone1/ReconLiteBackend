@@ -1,14 +1,18 @@
 package com.emtechhouse.reconmasterLitebackend.Controller;
 import com.emtechhouse.reconmasterLitebackend.DTO.EntityResponse;
 import com.emtechhouse.reconmasterLitebackend.Models.ConfigurationTable;
-
 import com.emtechhouse.reconmasterLitebackend.Models.PriorityTable;
 import com.emtechhouse.reconmasterLitebackend.Services.ConfigServic;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.client.RestTemplate;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Collections;
 
 @RestController
@@ -18,7 +22,7 @@ import java.util.Collections;
 @CrossOrigin
 public class ConfigController {
     private final ConfigServic configServic;
-
+    private final RestTemplate restTemplate;
 
     @PostMapping("/save")
     public EntityResponse create(@RequestBody ConfigurationTable configurationTable) {
@@ -76,10 +80,41 @@ public class ConfigController {
     }
 
 
+    @GetMapping("/downloadFromServer")
+    public ResponseEntity<String> downloadFile(
+            @RequestParam String remoteFileUrl,
+            @RequestParam String username,
+            @RequestParam String password
+    ) {
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBasicAuth(username, password);
+
+            HttpEntity<?> httpEntity = new HttpEntity<>(headers);
+
+            byte[] fileBytes = restTemplate.exchange(remoteFileUrl, HttpMethod.GET, httpEntity, byte[].class).getBody();
+
+            String localFilePath = "local/path/to/save/file.ext";
+            try (FileOutputStream fos = new FileOutputStream(localFilePath)) {
+                fos.write(fileBytes);
+            }
+
+            return ResponseEntity.ok("File downloaded successfully.");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("Failed to download the file.");
+        }
+    }
+
+
+//    @GetMapping("/downloadFromServer1")
+//    public String downloadFile(@RequestParam String hostname, @RequestParam String username, @RequestParam String privateKeyPath, @RequestParam String itemToDownload) {
+//        try {
+//            sshService.downloadFile(hostname, username, privateKeyPath, itemToDownload);
+//            return "File downloaded successfully!";
+//        } catch (Exception e) {
+//            return "Error: " + e.getMessage();
+//        }
+//    }
+
 }
-
-
-
-
-
-

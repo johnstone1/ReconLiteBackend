@@ -11,5 +11,6 @@ public interface PriorityRepository extends JpaRepository<PriorityTable, Long> {
     @Override
     Optional<PriorityTable> findById(Long id);
     List<PriorityTable> findByDeletedFlag(Character deletedFlag);
+    Optional<PriorityTable>findByPriorityName(String priorityName);
 
 }

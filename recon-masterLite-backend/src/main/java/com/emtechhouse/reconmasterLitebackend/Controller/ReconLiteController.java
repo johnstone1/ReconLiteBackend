@@ -38,13 +38,13 @@
 //public class ReconLiteController {
 //    @Value("${spring.application.files.hello-paissa}")
 //    String filePath;
-//    private final FileHandler fileHandler;
+//    //private final FileHandler fileHandler;
 //    private final FileReader fileReader;
-//    private final FinacleStagingService finacleStagingService;
-//    private final ThirdPartyStagingService thirdPartyStagingService;
-//    private final ReconService reconService;
-//    private  final JsonComparisonService jsonComparisonService;
-//    private final JsonComparison jsonComparison;
+//    //private final FinacleStagingService finacleStagingService;
+//    //private final ThirdPartyStagingService thirdPartyStagingService;
+//    //private final ReconService reconService;
+//    //private  final JsonComparisonService jsonComparisonService;
+//   // private final JsonComparison jsonComparison;
 //
 //    private static final Map<String, String> JSON_FIELD_MAPPING = new HashMap<>();
 //    static {
@@ -332,36 +332,36 @@
 //        return true;
 //    }
 //
-//    @PostMapping("/upload-hp-files/test3")
-//    public ResponseEntity<EntityResponse<?>> uploadFiles(@RequestParam("files") List<MultipartFile> files) {
-//        EntityResponse<?> response;
-//
-//        try {
-//            response = fileHandler.fileTypeHandler(files);
-//
-//            if (response.getStatusCode() == HttpStatus.OK.value()) {
-//                // If files were processed successfully, include the data in the response
-//                EntityResponse<List<Map<String, String>>> fileDataResponse = fileReader.readTextFile(files.get(0));
-//                response = EntityResponse.<List<Map<String, String>>>builder()
-//                        .message("Files processed successfully.")
-//                        .entity(fileDataResponse.getEntity())
-//                        .statusCode(HttpStatus.OK.value())
-//                        .build();
-//                return ResponseEntity.ok(response);
-//            } else {
-//                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-//            }
-//        } catch (IOException e) {
-//            // Handle IOException if necessary
-//            response = EntityResponse.<String>builder()
-//                    .message("Failed to process uploaded files. Please try again.")
-//                    .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
-//                    .build();
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-//        }
-//    }
-//
-//    @PostMapping("/Upload/test")
+////    @PostMapping("/upload-hp-files/test3")
+////    public ResponseEntity<EntityResponse<?>> uploadFiles(@RequestParam("files") List<MultipartFile> files) {
+////        EntityResponse<?> response;
+////
+////        try {
+////            response = fileHandler.fileTypeHandler(files);
+////
+////            if (response.getStatusCode() == HttpStatus.OK.value()) {
+////                // If files were processed successfully, include the data in the response
+////                EntityResponse<List<Map<String, String>>> fileDataResponse = fileReader.readTextFile(files.get(0));
+////                response = EntityResponse.<List<Map<String, String>>>builder()
+////                        .message("Files processed successfully.")
+////                        .entity(fileDataResponse.getEntity())
+////                        .statusCode(HttpStatus.OK.value())
+////                        .build();
+////                return ResponseEntity.ok(response);
+////            } else {
+////                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+////            }
+////        } catch (IOException e) {
+////            // Handle IOException if necessary
+////            response = EntityResponse.<String>builder()
+////                    .message("Failed to process uploaded files. Please try again.")
+////                    .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+////                    .build();
+////            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+////        }
+////    }
+////
+////    @PostMapping("/Upload/test")
 //    public String uploadDataToDatabase(@RequestBody String jsonDataFromFrontend) {
 //        try {
 //            JSONArray jsonArray = new JSONArray(jsonDataFromFrontend);
@@ -402,41 +402,41 @@
 //            return "Error: " + e.getMessage();
 //        }
 //    }
-//    @PostMapping("/compare")
-//    public ResponseEntity<String> compareJsonFiles(
-//            @RequestParam("finacleFile") MultipartFile fina,
-//            @RequestParam("thirdPartyFile") MultipartFile third,
-//            @RequestParam("columnsToCompare") List<String> columnsToCompare
-//    ) {
-//        try {
-//            if (fina == null || third == null) {
-//                // Log an error message if either file is missing
-//                log.error("Please input two files for comparison.");
-//                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-//                        .body("Please input two files for comparison.");
-//            }
-//
-//            // Read and store JSON data using the service method
-//            Map<String, Object> dataMap = jsonComparisonService.readAndStoreFiles(fina, third);
-//
-//            // Pass the data map to the comparison method
-//            boolean comparisonResult = jsonComparisonService.compareJsonData(dataMap, columnsToCompare);
-//
-//            if (comparisonResult) {
-//                return ResponseEntity.ok()
-//                        .contentType(MediaType.TEXT_PLAIN)
-//                        .body("The JSON data matches in the specified columns.");
-//            } else {
-//                return ResponseEntity.ok()
-//                        .contentType(MediaType.TEXT_PLAIN)
-//                        .body("The JSON data does not match in the specified columns.");
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body("An error occurred");
-//        }
-//    }
+////    @PostMapping("/compare")
+////    public ResponseEntity<String> compareJsonFiles(
+////            @RequestParam("finacleFile") MultipartFile fina,
+////            @RequestParam("thirdPartyFile") MultipartFile third,
+////            @RequestParam("columnsToCompare") List<String> columnsToCompare
+////    ) {
+////        try {
+////            if (fina == null || third == null) {
+////                // Log an error message if either file is missing
+////                log.error("Please input two files for comparison.");
+////                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+////                        .body("Please input two files for comparison.");
+////            }
+////
+////            // Read and store JSON data using the service method
+////            Map<String, Object> dataMap = jsonComparisonService.readAndStoreFiles(fina, third);
+////
+////            // Pass the data map to the comparison method
+////            boolean comparisonResult = jsonComparisonService.compareJsonData(dataMap, columnsToCompare);
+////
+////            if (comparisonResult) {
+////                return ResponseEntity.ok()
+////                        .contentType(MediaType.TEXT_PLAIN)
+////                        .body("The JSON data matches in the specified columns.");
+////            } else {
+////                return ResponseEntity.ok()
+////                        .contentType(MediaType.TEXT_PLAIN)
+////                        .body("The JSON data does not match in the specified columns.");
+////            }
+////        } catch (Exception e) {
+////            e.printStackTrace();
+////            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+////                    .body("An error occurred");
+////        }
+////    }
 //
 //    @PostMapping("/Upload/excel/file")
 //    public ResponseEntity<String> uploadDataToDatabase(@RequestParam("file") MultipartFile file) {

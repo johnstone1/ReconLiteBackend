@@ -189,6 +189,14 @@
 			<artifactId>jasperreports</artifactId>
 			<version>6.20.0</version>
 		</dependency>
+
+
+		<dependency>
+			<groupId>com.jcraft</groupId>
+			<artifactId>jsch</artifactId>
+			<version>0.1.54</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>

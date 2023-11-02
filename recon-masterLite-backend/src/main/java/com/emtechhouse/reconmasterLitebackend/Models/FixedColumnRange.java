@@ -16,9 +16,16 @@ public class FixedColumnRange {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String columnName;
-    private String startIndex;
-    private String endIndex;
-    private String columnTypeIdentifier;//finacle or third party
+    private String columnDataType;
+
+    private String columnPosition;
+    //private String fileTypeIdentifier;
+    private long startIndex;
+    private long endIndex;
+    private String dateFormat;
+    private boolean hasAllowance;
+    private String allowanceAmount;
+    private String columnTypeIdentifier;//variable type
     private int priority;
     private boolean isDelimited=false;
     private String delimiter;

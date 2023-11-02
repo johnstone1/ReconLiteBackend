@@ -12,7 +12,5 @@ public interface ConfigurationTableRepository extends JpaRepository<Configuratio
     Optional<ConfigurationTable> findById(Long id);
     Optional<ConfigurationTable>findByFileType(String fileType);
     List<ConfigurationTable> findByDeletedFlag(Character N);
-    //List<ConfigurationTable> findById(Long id);
-
 
 }

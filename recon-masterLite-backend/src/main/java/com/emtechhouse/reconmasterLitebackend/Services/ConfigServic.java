@@ -5,8 +5,13 @@ import com.emtechhouse.reconmasterLitebackend.Repositories.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,8 +24,12 @@ public class  ConfigServic {
     private final ColuRepository coluRepository;
     private final FixedColumnRangeRepository fixedColumnRangeRepository;
     private final PriorityRepository priorityRepository;
-
     private final ColumnsRepository columnsRepository;
+
+
+    @Value("${spring.application.files.c2bTanzania-voda}")
+    private String vodaDir;
+
     public EntityResponse<ConfigurationTable> create1(List<ConfigurationTable> configurationList) {
         EntityResponse<ConfigurationTable> response = new EntityResponse<>();
         try {
@@ -72,7 +81,8 @@ public class  ConfigServic {
         target.setPort(source.getPort());
         target.setHeaders(source.getHeaders());
         target.setFullFileName(source.getFileName());
-        target.setRunningNumber(source.getRunningNumber());
+        target.setRunningNumberStartIndex(source.getRunningNumberStartIndex());
+        target.setRunningNumberEndIndex(source.getRunningNumberEndIndex());
         target.setIsDelimited(source.getIsDelimited());
         target.setPath(source.getPath());
         target.setDateFormat(source.getDateFormat());
@@ -88,7 +98,7 @@ public class  ConfigServic {
         try {
             List<ConfigurationTable> configurationTableList = configurationTableRepository.findByDeletedFlag('N');
 
-            if (!configurationTableList.isEmpty()) {
+            if (!configurationTableList.isEmpty()){
 
                 response.setMessage(HttpStatus.FOUND.getReasonPhrase());
                 response.setStatusCode(HttpStatus.FOUND.value());
@@ -159,6 +169,8 @@ public class  ConfigServic {
                 configurationTable2.setUsername(configurationTable.getUsername());
                 configurationTable2.setPassword(configurationTable.getPassword());
                 configurationTable2.setIpAddress(configurationTable.getIpAddress());
+                configurationTable2.setRunningNumberStartIndex(configurationTable.getRunningNumberStartIndex());
+                configurationTable2.setRunningNumberEndIndex(configurationTable.getRunningNumberEndIndex());
                 configurationTable2.setPort(configurationTable.getPort());
                 configurationTable2.setIsDelimited(configurationTable.getIsDelimited());
                 configurationTable2.setPath(configurationTable.getPath());
@@ -192,45 +204,53 @@ public class  ConfigServic {
         EntityResponse<PriorityTable> response = new EntityResponse<>();
         try {
             for (PriorityTable priorityTable : priorityTableList) {
-                Optional<PriorityTable> existingConfiguration =
-                        priorityRepository.findById(priorityTable.getId());
-                if (existingConfiguration.isPresent()) {
-                    PriorityTable existing = existingConfiguration.get();
+                // Check if the priority name is unique
+                if (!isPriorityNameUnique(priorityTable)) {
+                    response.setMessage("Priority name should be unique");
+                    response.setStatusCode(HttpStatus.BAD_REQUEST.value());
+                    return response;
+                }
+
+                Optional<PriorityTable> existingPriority = priorityRepository.findById(priorityTable.getId());
+                if (existingPriority.isPresent()) {
+                    // If the priority already exists, copy properties from the existing one
+                    PriorityTable existing = existingPriority.get();
                     priorityTable = copyConf(existing, priorityTable);
                 }
 
-                PriorityTable savedConfiguration = priorityRepository.save(priorityTable);
+                // Save the PriorityTable
+                PriorityTable savedPriority = priorityRepository.save(priorityTable);
 
-                    if (priorityTable.getColumns() != null) {
-                        for (Columns column : priorityTable.getColumns()) {
-                            column.setPriority(savedConfiguration.getPriority()); // Set priority to match the PriorityTable's priority
-                            column.setPriorityName(savedConfiguration.getPriorityName());
-                            column.setPriorityTable(savedConfiguration);
-                            columnsRepository.save(column);
-                        }
-
+                if (priorityTable.getColumns() != null) {
+                    for (Columns column : priorityTable.getColumns()) {
+                        // Set references for Columns
+                        column.setPriorityTable(savedPriority);
+                        column.setPriorityName(savedPriority.getPriorityName());
+                        // Save the Columns
+                        columnsRepository.save(column);
+                    }
                 }
-
             }
 
             response.setMessage(HttpStatus.CREATED.getReasonPhrase());
             response.setStatusCode(HttpStatus.CREATED.value());
-            //response.setEntity((ConfigurationTable) configurationList);
         } catch (Exception e) {
-            response.setMessage("Failed to save configurations");
+            response.setMessage("Failed to save priorities");
             response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            // Log the error
             e.printStackTrace();
         }
         return response;
     }
 
-    private PriorityTable copyConf(
-            PriorityTable source, PriorityTable target) {
+    private boolean isPriorityNameUnique(PriorityTable priorityTable) {
+        Optional<PriorityTable> existingPriority = priorityRepository.findByPriorityName(priorityTable.getPriorityName());
+        return existingPriority.isEmpty() || existingPriority.get().getId() == priorityTable.getId();
+    }
+
+    private PriorityTable copyConf(PriorityTable source, PriorityTable target) {
         target.setStatus(source.getStatus());
         target.setPriority(source.getPriority());
         target.setDeletedFlag(source.getDeletedFlag());
-
         return target;
     }
 
@@ -358,5 +378,37 @@ public class  ConfigServic {
 
         return response;
     }
-
+//    public void downloadFile(String hostname, String username, String privateKeyPath, String itemToDownload) throws Exception {
+//        JSch jsch = new JSch();
+//
+//        file finacle = remote file
+//
+//        Session session = jsch.getSession(username, hostname, 22);
+//        session.setConfig("PreferredAuthentications", "publickey");
+//        jsch.addIdentity(privateKeyPath);
+//        session.connect();
+//
+//        ChannelSftp channelSftp = (ChannelSftp) session.openChannel("sftp");
+//        channelSftp.connect();
+//
+//        Vector<ChannelSftp.LsEntry> files = channelSftp.ls(itemToDownload);
+//        if (!files.isEmpty()) {
+//            ChannelSftp.LsEntry file = files.get(0);
+//            if (!file.getAttrs().isDir()) {
+//                // If it's a file, download it
+//                InputStream inputStream = channelSftp.get(file.getFilename());
+//                Path localPath = Path.of(file.getFilename());
+//                Files.copy(inputStream, localPath, StandardCopyOption.REPLACE_EXISTING);
+//                inputStream.close();
+//            } else {
+//                // If it's a directory, you may choose to zip and download it as in the original script
+//                // For simplicity, we are not zipping here, but you can modify it to do so.
+//            }
+//        } else {
+//            throw new Exception("File not found.");
+//        }
+//
+//        channelSftp.disconnect();
+//        session.disconnect();
+//    }
 }
